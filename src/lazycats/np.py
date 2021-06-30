@@ -1,15 +1,15 @@
 """NumPy utility functions"""
 import numpy as np
 
-def top_k_indices(arr, k, axis=1):
-    """Get top `k` indices in innermost axis"""
-    if axis != 1:
-        raise NotImplementedError
-    
-    temp = np.array(arr) # copy
+def top_k_indices(arr, k):
+    """Get top `k` indices in INNERMOST axis"""
+    temp = np.array(arr).astype(float) # copy
     top_k_ixs = []
-    for _ in range(k): # no checking if k > (array length along axis of argmax)
-        max_ixs = np.argmax(temp, axis=axis)
+    if k > temp.shape[-1]:
+        k = temp.shape[-1]
+
+    for _ in range(k):
+        max_ixs = np.argmax(temp, axis=-1)
         top_k_ixs.append(max_ixs)
         temp[(range(len(temp)), max_ixs)] = -np.inf # remove from next comparison
     
@@ -19,6 +19,7 @@ def top_k_indices(arr, k, axis=1):
 
 def contiguous_lengths(arr):
     """Get lengths of contiguous elements"""
+    arr = np.array(arr)
     assert(len(arr.shape) == 1)
     change_points = np.where(arr[1:]-arr[:-1])[0] + 1 # find where values change
     if len(arr) not in change_points:
@@ -31,6 +32,7 @@ def contiguous_lengths(arr):
 
 def squash_consecutive_duplicates(arr):
     """Squash contiguous sections into single elements"""
+    arr = np.array(arr)
     assert(len(arr.shape) == 1)
     # find where values change
     # this is the first index of any consecutive sequence of same values (except element 0)
