@@ -4,16 +4,11 @@ import numpy as np
 def top_k_indices(arr, k):
     """Get top `k` indices in INNERMOST axis"""
     temp = np.array(arr).astype(float) # copy
-    top_k_ixs = []
     if k > temp.shape[-1]:
         k = temp.shape[-1]
 
-    for _ in range(k):
-        max_ixs = np.argmax(temp, axis=-1)
-        top_k_ixs.append(max_ixs)
-        temp[(range(len(temp)), max_ixs)] = -np.inf # remove from next comparison
-    
-    top_k_ixs = np.hstack([np.array([ixs]).T for ixs in top_k_ixs])
+    top_ixs = np.flip(np.argsort(arr, axis=-1), axis=-1)
+    top_k_ixs = np.take(top_ixs, range(k), axis=-1)
     return top_k_ixs
 
 

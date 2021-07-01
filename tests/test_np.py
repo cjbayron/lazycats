@@ -9,6 +9,26 @@ def test_top_k_indices_normal():
 	res = catnp.top_k_indices(arr, k)
 	assert(np.all(res==exp))
 
+def test_top_k_indices_normal2():
+	arr = [1,2,3,4,6,5]
+	k = 2
+	exp = np.array([4,5])
+	res = catnp.top_k_indices(arr, k)
+	assert(np.all(res==exp))
+
+def test_top_k_indices_normal3():
+	arr = [
+		[[1,2,3],[4,6,5]],
+		[[9,8,7],[7,6,11]]
+	]
+	k = 2
+	exp = np.array([
+		[[2,1],[1,2]],
+		[[0,1],[2,0]]
+	])
+	res = catnp.top_k_indices(arr, k)
+	assert(np.all(res==exp))
+
 def test_top_k_indices_large_k():
 	arr = [[1,2,3],[4,6,5]]
 	k = 5
