@@ -33,3 +33,38 @@ def squash_consecutive_duplicates(arr):
     # this is the first index of any consecutive sequence of same values (except element 0)
     change_points = np.where(arr[1:]-arr[:-1])[0] + 1
     return np.concatenate((arr[0:1], arr[change_points]))
+
+
+def divide_to_subsequences(seq, sub_len, pad=None, pre_pad=True):
+    """
+    Divide a sequence array into subsequences across outermost axis,
+    padding the last subsequence as needed (default pad is zeroes)
+    """
+    seq = np.array(seq)
+    if not pad: # default pad values
+        pad = np.zeros(seq.shape[1:])
+    else:
+        pad = np.array(pad)
+
+    assert(pad.shape == seq.shape[1:])
+
+    pad_len = 0
+    rem = len(seq)%sub_len
+    if rem > 0:
+        pad_len = sub_len - rem
+
+    n_subseq_nopads = int(len(seq)/sub_len) # num. of subseq. that need no pads
+    n_nopads = sub_len*n_subseq_nopads
+    subseq = seq[:n_nopads].reshape((n_subseq_nopads, sub_len, *seq.shape[1:]))
+
+    if pad_len > 0:
+        if pre_pad:
+            padded_subseq = np.append(np.array([pad]*pad_len),
+                seq[n_nopads:], axis=0)
+        else:
+            padded_subseq = np.append(seq[n_nopads:],
+                np.array([pad]*pad_len), axis=0)
+
+        subseq = np.append(subseq, padded_subseq[np.newaxis, :], axis=0)
+
+    return subseq
